@@ -6,7 +6,14 @@ from PIL import Image
 from hy3dgen.rembg import BackgroundRemover
 from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline
 
-image_path = 'assets/demo.png'
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--image_file', type=str, default='assets/demo.png')
+parser.add_argument('--output_file', type=str, default='demo.obj')
+args = parser.parse_args()
+
+image_path = args.image_file
 image = Image.open(image_path).convert("RGBA")
 if image.mode == 'RGB':
     rembg = BackgroundRemover()
@@ -27,4 +34,4 @@ mesh = pipeline(image=image,
                 output_type='trimesh'
                 )[0]
 print("--- %s seconds ---" % (time.time() - start_time))
-mesh.export(f'demo.glb')
+mesh.export(args.output_file)
