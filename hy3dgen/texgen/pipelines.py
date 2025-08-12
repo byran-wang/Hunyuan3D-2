@@ -75,16 +75,17 @@ class Hunyuan3DPaintPipeline:
                     delight_model_path = os.path.join(model_path, 'hunyuan3d-delight-v2-0')
                     multiview_model_path = os.path.join(model_path, subfolder)
                     return cls(Hunyuan3DTexGenConfig(delight_model_path, multiview_model_path, subfolder))
-                except ImportError:
-                    logger.warning(
-                        "You need to install HuggingFace Hub to load models from the hub."
-                    )
-                    raise RuntimeError(f"Model path {model_path} not found")
+                except Exception:
+                    import traceback
+                    traceback.print_exc()
+                    raise RuntimeError(f"Something wrong while loading {model_path}")
             else:
                 return cls(Hunyuan3DTexGenConfig(delight_model_path, multiview_model_path, subfolder))
-
-        raise FileNotFoundError(f"Model path {original_model_path} not found and we could not find it at huggingface")
-
+        else:
+            delight_model_path = os.path.join(model_path, 'hunyuan3d-delight-v2-0')
+            multiview_model_path = os.path.join(model_path, subfolder)
+            return cls(Hunyuan3DTexGenConfig(delight_model_path, multiview_model_path, subfolder))
+            
     def __init__(self, config):
         self.config = config
         self.models = {}

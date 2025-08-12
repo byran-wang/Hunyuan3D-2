@@ -120,7 +120,12 @@ def get_obj_from_str(string, reload=False):
 def instantiate_from_config(config, **kwargs):
     if "target" not in config:
         raise KeyError("Expected key `target` to instantiate.")
-    cls = get_obj_from_str(config["target"])
+    try:
+        target = config['target']
+        cls = get_obj_from_str(target)
+    except Exception as e:
+        target = config['target'].replace("hy3dshape", "hy3dgen.shapegen")
+        cls = get_obj_from_str(target)
     params = config.get("params", dict())
     kwargs.update(params)
     instance = cls(**kwargs)
@@ -170,7 +175,7 @@ class Hunyuan3DDiTPipeline:
         model = instantiate_from_config(config['model'])
         model.load_state_dict(ckpt['model'])
         vae = instantiate_from_config(config['vae'])
-        vae.load_state_dict(ckpt['vae'])
+        vae.load_state_dict(ckpt['vae'], strict=False)
         conditioner = instantiate_from_config(config['conditioner'])
         if 'conditioner' in ckpt:
             conditioner.load_state_dict(ckpt['conditioner'])
