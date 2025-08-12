@@ -37,7 +37,7 @@ mesh = pipeline(
     output_type='trimesh'
 )[0]
 print("--- %s seconds ---" % (time.time() - start_time))
-mesh.export(f'demo_white_mesh_mv.glb')
+mesh.export(f'demo_white_mesh_mv.obj')
 
 mesh = pipeline_texgen(mesh, image=images["front"])
-mesh.export('demo_textured_mv.glb')
+mesh.export('demo_textured_mv.obj')
