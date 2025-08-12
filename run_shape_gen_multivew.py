@@ -27,7 +27,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--script",
         type=str,
-        default="examples/shape_gen_multiview.py",
+        default="examples.shape_gen_multiview",
         help="Path to the generation script to execute per scene.",
     )
     parser.add_argument(
@@ -57,7 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--python",
         type=str,
-        default="/home/simba/anaconda3/envs/hunyun/bin/python",
+        default="/home/simba/anaconda3/envs/trellis/bin/python",
         help="Python binary to use when launching the generation script.",
     )
     return parser.parse_args()
@@ -97,7 +97,7 @@ def build_command(python_bin: str, script_path: str, input_folder: str, scene: s
     output_dir = os.path.join(output_base, scene, sub_folder)
     os.makedirs(output_dir, exist_ok=True)
     return (
-        f"{python_bin} {script_path} "
+        f"{python_bin} -m {script_path} "
         f"--front_image '{input1}' --left_image '{input2}' --back_image '{input3}' "
         f"--output_dir '{output_dir}'"
     )
