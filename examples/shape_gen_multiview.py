@@ -1,4 +1,6 @@
 import time
+import argparse
+import os
 
 import torch
 from PIL import Image
@@ -6,10 +8,17 @@ from PIL import Image
 from hy3dgen.rembg import BackgroundRemover
 from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--front_image", type=str, required=True)
+parser.add_argument("--left_image", type=str, required=True)
+parser.add_argument("--back_image", type=str, required=True)
+parser.add_argument("--output_dir", type=str, required=True)
+args = parser.parse_args()
+
 images = {
-    "front": "assets/example_mv_images/1/front.png",
-    "left": "assets/example_mv_images/1/left.png",
-    "back": "assets/example_mv_images/1/back.png"
+    "front": args.front_image,
+    "left": args.left_image,
+    "back": args.back_image
 }
 
 for key in images:
@@ -34,5 +43,7 @@ mesh = pipeline(
     generator=torch.manual_seed(12345),
     output_type='trimesh'
 )[0]
-print("--- %s seconds ---" % (time.time() - start_time))
-mesh.export(f'demo_mv.glb')
+print("--- taking %s seconds ---" % (time.time() - start_time))
+print(f'Saving mesh to {args.output_dir}/mesh.obj')
+os.makedirs(args.output_dir, exist_ok=True)
+mesh.export(f'{args.output_dir}/mesh.obj')
