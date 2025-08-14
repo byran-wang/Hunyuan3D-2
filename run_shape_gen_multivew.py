@@ -3,6 +3,7 @@ import argparse
 from concurrent.futures import ThreadPoolExecutor
 import subprocess
 from typing import List
+import shutil
 
 try:
     import torch
@@ -15,13 +16,13 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--input_folder",
         type=str,
-        default="/home/simba/Documents/project/TRELLIS/datasets/ABO/renders_cond",
+        default="datasets/real_multiview",
         help="Root folder containing scene subfolders with images.",
     )
     parser.add_argument(
         "--output_base",
         type=str,
-        default="outputs_HOI3D_multi",
+        default="outputs_real_multiview",
         help="Base output directory where per-scene outputs will be written.",
     )
     parser.add_argument(
@@ -33,7 +34,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--indices",
         type=str,
-        default="7,14,21",
+        default="0,1,3", # front, left, back
         help="Comma-separated image indices (0-based) to pick as front,left,back from the sorted image list.",
     )
     parser.add_argument(
