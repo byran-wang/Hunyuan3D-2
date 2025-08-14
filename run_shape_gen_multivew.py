@@ -60,6 +60,11 @@ def parse_args() -> argparse.Namespace:
         default="/home/simba/anaconda3/envs/trellis/bin/python",
         help="Python binary to use when launching the generation script.",
     )
+    parser.add_argument(
+        "--rebuild",
+        action="store_true",
+        help="Rebuild the output directory if it exists.",
+    )
     return parser.parse_args()
 
 
@@ -84,7 +89,7 @@ def list_scenes(input_folder: str, scenes_arg: str) -> List[str]:
     return all_entries
 
 
-def build_command(python_bin: str, script_path: str, input_folder: str, scene: str, indices: List[int], output_base: str) -> str:
+def build_command(python_bin: str, script_path: str, input_folder: str, scene: str, indices: List[int], output_base: str, rebuild: bool) -> str:
     scene_dir = os.path.join(input_folder, scene)
     images = sorted(os.listdir(scene_dir))
     try:
@@ -96,10 +101,15 @@ def build_command(python_bin: str, script_path: str, input_folder: str, scene: s
     sub_folder = "_".join([images[i].split(".")[0] for i in indices])
     output_dir = os.path.join(output_base, scene, sub_folder)
     os.makedirs(output_dir, exist_ok=True)
+    rebuild_cmd = ""
+    if rebuild:
+        rebuild_cmd = f"--rebuild"
+
     return (
         f"{python_bin} -m {script_path} "
         f"--front_image '{input1}' --left_image '{input2}' --back_image '{input3}' "
-        f"--output_dir '{output_dir}'"
+        f"--output_dir '{output_dir}' "
+        f"{rebuild_cmd}"
     )
 
 
@@ -157,6 +167,7 @@ if __name__ == "__main__":
                 scene=scene,
                 indices=indices,
                 output_base=args.output_base,
+                rebuild=args.rebuild,
             )
             commands.append(cmd)
         except RuntimeError as e:

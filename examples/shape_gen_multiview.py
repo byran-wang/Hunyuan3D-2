@@ -13,6 +13,8 @@ parser.add_argument("--front_image", type=str, required=True)
 parser.add_argument("--left_image", type=str, required=True)
 parser.add_argument("--back_image", type=str, required=True)
 parser.add_argument("--output_dir", type=str, required=True)
+parser.add_argument("--size", type=int, default=1024)
+parser.add_argument("--rebuild", action="store_true")
 args = parser.parse_args()
 
 images = {
@@ -21,6 +23,8 @@ images = {
     "back": args.back_image
 }
 
+if args.rebuild:
+    shutil.rmtree(args.output_dir)
 for key in images:
     image = Image.open(images[key]).convert("RGBA")
     if image.mode == 'RGB':
