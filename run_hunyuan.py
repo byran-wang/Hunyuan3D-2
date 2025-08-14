@@ -62,12 +62,12 @@ class run_trellis:
                 scene_metadata = metadata[metadata['sha256'] == scene]
                 object_gt = os.path.join(self.data_dir, "renders", scene_metadata["sha256"].values[0], "mesh.ply")
                 if not os.path.exists(object_gt):
-                    print(f"[warning] Object {scene} not found in metadata")
+                    print(f"[warning] GT object {object_gt} not found in metadata")
                     continue
                     
-                object_pred = os.path.join(self.output_dir, scene, view, "gaussian.glb")
+                object_pred = os.path.join(self.output_dir, scene, view, "mesh.obj")
                 if not os.path.exists(object_pred):
-                    print(f"[warning] Object {scene} not found in metadata")
+                    print(f"[warning] Pred object {object_pred} not found in metadata")
                     continue
                     
                 evaluation_tasks.append((scene, view, object_gt, object_pred))
