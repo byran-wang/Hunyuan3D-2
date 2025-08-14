@@ -567,6 +567,7 @@ class Hunyuan3DDiTPipeline:
         mc_algo=None,
         output_type: Optional[str] = "trimesh",
         enable_pbar=True,
+        output_dir=None,
         **kwargs,
     ) -> List[List[trimesh.Trimesh]]:
         callback = kwargs.pop("callback", None)
@@ -696,6 +697,7 @@ class Hunyuan3DDiTFlowMatchingPipeline(Hunyuan3DDiTPipeline):
         num_chunks=8000,
         output_type: Optional[str] = "trimesh",
         enable_pbar=True,
+        output_dir=None,
         **kwargs,
     ) -> List[List[trimesh.Trimesh]]:
         callback = kwargs.pop("callback", None)
@@ -712,6 +714,25 @@ class Hunyuan3DDiTFlowMatchingPipeline(Hunyuan3DDiTPipeline):
 
         cond_inputs = self.prepare_image(image)
         image = cond_inputs.pop('image')
+        image_copy = image.clone()
+        view_idxs = cond_inputs['view_idxs'][0]
+        # save image to output_dir
+        if output_dir is not None:
+            image_reshape = image.reshape(-1, *image.shape[-3:])
+            idx_dir_map = {
+                0: 'front',
+                1: 'left',
+                2: 'back',
+                3: 'right',
+            }
+            for i, img in enumerate(image_reshape):
+                img = img.cpu().clone()
+                img = (img + 1) / 2
+                img = (img * 255).clamp(0, 255).byte()
+                img = img.permute(1, 2, 0) 
+                img_pil = Image.fromarray(img.numpy())
+                img_pil.save(f'{output_dir}/{idx_dir_map[view_idxs[i]]}.png')
+
         cond = self.encode_cond(
             image=image,
             additional_cond_inputs=cond_inputs,
