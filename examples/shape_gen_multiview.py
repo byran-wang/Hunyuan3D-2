@@ -28,20 +28,17 @@ if args.rebuild:
 
 for key in images:
     image = Image.open(images[key])
-    image = image.transpose(Image.ROTATE_270)
     # resize image with the largest dimension to 1024
     width, height = image.size
     if width > height:
         image = image.resize((args.size, int(args.size * height / width)))
     else:
         image = image.resize((int(args.size * width / height), args.size))
-
-    if image.mode == 'RGB':
-        rembg = BackgroundRemover()
-        image = rembg(image)
-        image = image.transpose(Image.ROTATE_90) 
-    else:
-        image = image.convert("RGBA")
+    # image.save(f'aaa.png')
+    # if image.mode == 'RGB':
+    #     rembg = BackgroundRemover()
+    #     image = rembg(image)
+    #     image = image.transpose(Image.ROTATE_90) 
     images[key] = image
 
 # save images to output_dir

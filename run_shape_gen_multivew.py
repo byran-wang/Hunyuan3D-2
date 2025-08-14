@@ -34,7 +34,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--indices",
         type=str,
-        default="0,1,3", # front, left, back
+        default="0,1,3", # 0 front, 1 left, 2, right, 3 back
         help="Comma-separated image indices (0-based) to pick as front,left,back from the sorted image list.",
     )
     parser.add_argument(
