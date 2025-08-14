@@ -7,17 +7,15 @@ from hy3dgen.rembg import BackgroundRemover
 from hy3dgen.shapegen import Hunyuan3DDiTFlowMatchingPipeline
 
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--image_file', type=str, default='assets/demo.png')
-parser.add_argument('--output_file', type=str, default='demo.obj')
+parser.add_argument('--image_file', type=str, default='')
+parser.add_argument('--output_dir', type=str, default='outputs')
 args = parser.parse_args()
 
 image_path = args.image_file
-image = Image.open(image_path).convert("RGBA")
-if image.mode == 'RGB':
-    rembg = BackgroundRemover()
-    image = rembg(image)
+image = Image.open(image_path)
 
 pipeline = Hunyuan3DDiTFlowMatchingPipeline.from_pretrained(
     'tencent/Hunyuan3D-2',
@@ -31,7 +29,8 @@ mesh = pipeline(image=image,
                 octree_resolution=380,
                 num_chunks=20000,
                 generator=torch.manual_seed(12345),
-                output_type='trimesh'
+                output_type='trimesh',
+                output_dir=args.output_dir,
                 )[0]
 print("--- %s seconds ---" % (time.time() - start_time))
-mesh.export(args.output_file)
+mesh.export(os.path.join(args.output_dir, 'mesh.obj'))

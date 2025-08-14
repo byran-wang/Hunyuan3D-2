@@ -715,9 +715,9 @@ class Hunyuan3DDiTFlowMatchingPipeline(Hunyuan3DDiTPipeline):
         cond_inputs = self.prepare_image(image)
         image = cond_inputs.pop('image')
         image_copy = image.clone()
-        view_idxs = cond_inputs['view_idxs'][0]
-        # save image to output_dir
-        if output_dir is not None:
+        if 'view_idxs' in cond_inputs:
+            view_idxs = cond_inputs['view_idxs'][0]
+            # save image to output_dir
             image_reshape = image.reshape(-1, *image.shape[-3:])
             idx_dir_map = {
                 0: 'front',
@@ -732,6 +732,13 @@ class Hunyuan3DDiTFlowMatchingPipeline(Hunyuan3DDiTPipeline):
                 img = img.permute(1, 2, 0) 
                 img_pil = Image.fromarray(img.numpy())
                 img_pil.save(f'{output_dir}/{idx_dir_map[view_idxs[i]]}.png')
+        else:
+            img = image.squeeze(0).cpu().clone()
+            img = (img + 1) / 2
+            img = (img * 255).clamp(0, 255).byte()
+            img = img.permute(1, 2, 0) 
+            img_pil = Image.fromarray(img.numpy())
+            img_pil.save(f'{output_dir}/input.png')
 
         cond = self.encode_cond(
             image=image,
