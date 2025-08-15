@@ -12,7 +12,7 @@ import subprocess
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input_folder', type=str, default='datasets/real_multiview')
-parser.add_argument('--output_base', type=str, default='outputs_single_view')
+parser.add_argument('--output_base', type=str, default='outputs_real_multiview_masked')
 args = parser.parse_args()
 
 # list all images in input_folder
